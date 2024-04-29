@@ -22,7 +22,4 @@ ax.set_xlabel("T [K]")
 fig.savefig("h_mass_frac.png")
 plt.show()
 
-"""
-Question: noe galt med init??
-også spør om BBN 64-66
-"""
+

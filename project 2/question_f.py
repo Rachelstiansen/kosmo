@@ -26,4 +26,5 @@ plt.show()
 
 """
 Question: overflow....
+også spør om BBN 64-66
 """
