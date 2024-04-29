@@ -24,7 +24,8 @@ class BBN:
         self.RR = ReactionRates() # Initiate the set of reaction rates equations
         
         # Initiate the background equations , e.g. equations for the Hubble parameter and rho_b :
-        self.background = Background(**background_kwargs )
+        self.background = Background(**background_kwargs)
+        self.cgs = cgs()
 
     def get_ODE(self, lnT: float, Y: np.ndarray) -> np.ndarray:
         """
@@ -71,14 +72,14 @@ class BBN:
 
     def get_np_equil(self, T_i):
         """
-        Not sure if this is the way to call the constants
+        ...
         """
-        Y_n = (1 + np.exp((self.background.cgs.m_n - self.background.cgs.m_p) * self.background.cgs.c**2 / (self.background.cgs.k_B * T_i)))**(-1)
+        Y_n = (1 + np.exp((self.cgs.m_n - self.cgs.m_p) * self.cgs.c**2 / (self.cgs.k_B * T_i)))**(-1)
         Y_p = 1 - Y_n
 
         return Y_n, Y_p
 
-    def get_IC (self, T_init):
+    def get_IC(self, T_init):
         """
         Defines the initial condition array used in solve_BBN.
         The only nonzero values are for neutrons and protons, but the shape of self.Y_init is
@@ -90,7 +91,7 @@ class BBN:
         Y_init = np.zeros(self.NR_species) # Initializes all species to zero
         Y_n_init, Y_p_init = self.get_np_equil(T_init) # Solves eq 16-17
         Y_init[0] = Y_n_init
-        Y_n_init[1] = Y_p_init
+        Y_init[1] = Y_p_init
         
         return Y_init
     
@@ -106,15 +107,6 @@ class BBN:
         lnT = np.linspace(sol.t[0], sol.t[-1], self.NR_points)
         self.Y_i = sol.sol(lnT)
         self.T = np.exp(lnT)
-
-if __name__ == " __main__ ":
-    # Example use:
-    # Initiate the system including 3 species ( neutrons , protons and deuterium ):
-    bbn = BBN(NR_interacting_species = 3)
-    bbn.solve_BBN(T_end = 0.1e9) # solve the system until end temperature 0.1*10^9 K
+        
+        return self.T, self.Y_i
     
-    # Plot the mass fraction for each species :
-    fig, ax = plt.subplots ()
-    for i, y in enumerate (bbn.Y_i ):
-        ax.loglog(bbn.T, bbn.mass_number[i] * y, label = bbn.species_labels[i])
-
