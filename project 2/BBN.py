@@ -58,7 +58,7 @@ class BBN:
         if self.NR_species > 2: # Include deuterium
             Y_D = Y[2]
             # (n + p <-> D + gamma) (b.1)
-            Y_np = Y_n + Y_p
+            Y_np = Y_n * Y_p
             rate_np, rate_D = self.RR.get_np_to_D(T9, rho_b)
             change_LHS = Y_D * rate_D - Y_np * rate_np # left hand side changes
             dY[0] += change_LHS # Update the change to neutron fraction

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as au, constants as ac
 from scipy.integrate import quad
+from background import Background
 
 class ReactionRates:
     def __init__(self):
@@ -29,14 +30,21 @@ class ReactionRates:
         lambda_p = quad(I_p_n, 1, np.inf)[0] / tau
         
         return lambda_n, lambda_p
-
-    def get_np_to_D(T, rho):
-        ...
-
-    def get_nD_to_T(T, rho):
-        ...
     
-    def get_DD_to_pT(T, rho):
+    # Strong reactions:
+
+    def get_np_to_D(self, T9, rho_b):
+        rate_np = 2.5e4 * rho_b
+        rate_D = 4.68e9 * rate_np * T9**(3/2) * np.exp(-25.82/T9) / rho_b
+
+        return rate_np, rate_D
+
+    def get_nD_to_T(self, T9, rho_b):
+        rate_nD = rho_b * (75.5 + 1250 * T9)
+        rate_T = 1.63e10 * rate_nD * T9**(3/2) * np.exp(-72.62/T9) / rho_b
+
+        return rate_nD, rate_T
+    
+    def get_DD_to_pT(self, T9, rho_b):
         ...
 
-    # Strong reactions:
