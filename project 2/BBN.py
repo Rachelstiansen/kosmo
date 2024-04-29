@@ -70,12 +70,33 @@ class BBN:
         return - dY / Hubble
 
     def get_IC (self, T_init):
-        Y_init = np.zeros(self.NR_species)
-        Y_n_init, Y_p_init = self.get_np_equil(T_init)
-        Y_init[0] = Y_n_init[1] = Y_p_init
+        """
+        Defines the initial condition array used in solve_BBN.
+        The only nonzero values are for neutrons and protons, but the shape of self.Y_init is
+        determined by the number of particles included .
+        
+        Arguments :
+        T_init { float } -- the initial temperature
+        """
+        Y_init = np.zeros(self.NR_species) # Initializes all species to zero
+        Y_n_init, Y_p_init = self.get_np_equil(T_init) # Solves eq 16-17
+        Y_init[0] = Y_n_init
+        Y_n_init[1] = Y_p_init
         
         return Y_init
-
+    
+    def solve_BBN(self, T_init: float = 100e9, T_end: float = 0.01e9):
+        """
+        Solves the BBN - system for a given range of temperature values
+        
+        Keyword Arguments :
+            T_init { float } -- the initial temperature ( default : { 100e9 })
+            T_end { float } -- the final temperature ( default : {0. 01e9 })
+        """
+        sol = solve_ivp(self.get_ODE, [np.log(T_init), np.log(T_end)], y0=self.get_IC(T_init), method="Radau", rtol=1e-12, atol=1e-12, dense_output=True)
+        lnT = np.linspace(sol.t[0], sol.t[-1], self.NR_points)
+        self.Y_i = sol.sol(lnT)
+        self.T = np.exp(lnT)
 
 if __name__ == " __main__ ":
     # Example use:

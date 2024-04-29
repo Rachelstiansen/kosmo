@@ -6,7 +6,12 @@ class ReactionRates:
     def __init__(self):
         pass
 
+
     def get_rate_weak(T):
+
+        Z = 5.93
+        I = (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)))
+        
         lambda_n = ...
         lambda_p = ...
         return lambda_n, lambda_p
