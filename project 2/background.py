@@ -17,9 +17,14 @@ class Background:
         G = ac.G.cgs.value
         h_bar = ac.hbar.cgs.value
         c = ac.c.cgs.value
+        m_n = ac.m_n.value
+        m_p = ac.m_p.value
 
         self.H_0 = self.H_0.cgs.value
         self.Omega_r0 = self.Omega_r0.cgs.value
+
+    def T_nu(T):
+        return (4/11)**(1/3) * T
 
     def get_Hubble(T):
         return ...

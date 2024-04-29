@@ -5,7 +5,7 @@ from scipy.integrate import solve_ivp
 
 # Own imports
 from reaction_rates import ReactionRates
-from background import Background
+from background import Background, cgs
 
 class BBN:
     """
@@ -68,6 +68,15 @@ class BBN:
             ...
         
         return - dY / Hubble
+
+    def get_np_equil(self, T_i):
+        """
+        Not sure if this is the way to call the constants
+        """
+        Y_n = (1 + np.exp((self.background.cgs.m_n - self.background.cgs.m_p) * self.background.cgs.c**2 / (self.background.cgs.k_B * T_i)))**(-1)
+        Y_p = 1 - Y_n
+
+        return Y_n, Y_p
 
     def get_IC (self, T_init):
         """
