@@ -108,40 +108,58 @@ class ReactionRates:
         return rate_DD, rate_nHe3
     
     def get_DD_to_He4(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        D + D <-> He^4 + gamma
+        """
+        rate_DD = 24.1 * rho_b * T9**(-2/3) * np.exp(-4.26 * T9)**(-1/3) * (T9**(2/3) + 0.685 * T9 + 0.152 * T9**(4/3) + 0.265 * T9**(5/3))
+        rate_He4 = 4.5e10 * rate_DD * T9**(3/2) * np.exp(-276.7 / T9) / rho_b
         
-        return
+        return rate_DD, rate_He4
     
     def get_DHe3_to_He4p(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        D + He^3 <-> He^4 + p
+        """
+        rate_DHe3 = 2.6e9 * rho_b * T9**(-3/2) * np.exp(-2.99 / T9)
+        rate_He4p = 5.5 * rate_DHe3 * np.exp(-2.13 / T9)
         
-        return
+        return rate_DHe3, rate_He4p
     
     def get_DT_to_He4n(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        D + T <-> He^4 + n
+        """
+        rate_DT = 1.38e9 * rho_b * T9**(-3/2) * np.exp(-0.745 / T9)
+        rate_He4n = 5.5 * rate_DT * np.exp(-204.1 / T9)
         
-        return
+        return rate_DT, rate_He4n
 
     def get_He3T_to_He4D(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        He^3 + T <-> He^4 + D
+        """
+        rate_He3T = 3.88e9 * rho_b * T9**(-2/3) * np.exp(-7.72 * T9**(-1/3)) * (1 + 0.054 * T9**(1/3))
+        rate_He4D = 1.59 * rate_He3T * np.exp(-166.2 / T9)
         
-        return
+        return rate_He3T, rate_He4D
     
     def get_He3He4_to_Be7(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        He^3 + He^4 <-> Be^7 + gamma
+        """
+        rate_He3He4 = 4.8e6 * rho_b * T9**(-2/3) * np.exp(-12.8 * T9**(-1/3)) * (1 + 0.0326 * T9**(1/3) - 0.219 * T9**(2/3) - 0.0499 * T9 + 0.0258 * T9**(4/3) + 0.015 * T9**(5/3))
+        rate_Be7 = 1.12e10 * rate_He3He4 * T9**(3/2) * np.exp(-18.42 / T9) / rho_b
         
-        return
+        return rate_He3He4, rate_Be7
     
     def get_THe4_to_Li7(self, T9, rho_b):
-        rate_pD = ...
-        rate_He3 = ...
+        """
+        T + He^4 <-> Li^7 + gamma
+        """
+        rate_THe4 = 5.28e5 * rho_b * T9**(-2/3) * np.exp(-8.08 * T9**(-1/3)) * (1 + 0.0516 * T9**(1/3))
+        rate_Li7 = 1.12e10 * rate_THe4 * T9**(3/2) * np.exp(-28.63 / T9) / rho_b
         
-        return
+        return rate_THe4, rate_Li7
         
     def get_nBe7_to_pLi7(self, T9, rho_b):
         """
