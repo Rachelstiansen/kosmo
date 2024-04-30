@@ -143,12 +143,11 @@ class BBN:
             rate_DT, rate_He4n = self.RR.get_DT_to_He4n(T9, rho_b)
             change_LHS = Y_He4n * rate_He4n - Y_DT * rate_DT
 
-
             # (He^3 + T <-> He^4 + D) (b.15)
             Y_He3T = Y_He3 * Y_T
             Y_He4D = Y_He4 * Y_D
             rate_He3T, rate_He4D = self.RR.get_He3T_to_He4D(T9, rho_b)
-            change_LHS = ...
+            change_LHS = Y_He4D * rate_He4D - Y_He3T * rate_He3T
  
 
         if self.NR_species > 6: # Include Li7
@@ -156,6 +155,7 @@ class BBN:
             # (T + He^4 <-> Li^7 + gamma) (b.17)
             Y_THe4 = Y_T * Y_He4
             rate_THe4, rate_Li7 = self.RR.get_THe4_to_Li7(T9, rho_b)
+            change_LHS = Y_Li7 * rate_Li7 - Y_THe4 * rate_THe4
 
 
         if self.NR_species > 7: # Include Be7
@@ -163,11 +163,13 @@ class BBN:
             # (He^3 + He^4 <-> Be^7 + gamma) (b.16)
             Y_He3He4 = Y_He3 * Y_He4
             rate_He3He4, rate_Be7 = self.RR.get_He3He4_to_Be7(T9, rho_b)
+            change_LHS = Y_Be7 * rate_Be7 - Y_He3He4 * rate_He3He4
 
             # (n + Be^7 <-> p + Li^7) (b.18)
             Y_nBe7 = Y_n * Y_Be7
             Y_pLi7 = Y_p * Y_Li7
             rate_nBe7, rate_pLi7 = self.RR.get_nBe7_to_pLi7(T9, rho_b)
+            change_LHS = Y_pLi7 * rate_pLi7 - ...
 
         
         return - dY / Hubble
