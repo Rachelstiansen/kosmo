@@ -93,7 +93,7 @@ class ReactionRates:
         D + D <-> n + He^3 (b.7)
         """
         rate_DD = 3.9e8 * rho_b * T9**(-2/3) * np.exp(-4.26 * T9**(-1/3)) * (1 + 0.0979 * T9**(1/3) + 0.642 * T9**(2/3) + 0.44 * T9)
-        rate_nHe3 = 1.73 * rate_DD + 0.44 * T9
+        rate_nHe3 = 1.73 * rate_DD * np.exp(-37.94 / T9)
         
         return rate_DD, rate_nHe3
     
