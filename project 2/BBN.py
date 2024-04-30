@@ -106,31 +106,36 @@ class BBN:
             dY[1] -= change_LHS
             dY[3] -= change_LHS
 
-            # (b.6)
-            # (b.7)
-            # (b.15)
-            # (b.16)
+            # (D + D <-> n + He^3) (b.7)
 
         if self.NR_species > 5: # Include He4
             Y_He4 = Y[5]
-            # (b.5)
-            # (b.6)
-            # (b.9)
-            # (b.10)
-            # (b.11)
-            # (b.15)
-            # (b.16)
-            # (b.17)
+            # (p + T <-> He^4 + gamma) (b.5)
+
+            # (n + He^3 <-> He^4 + gamma) (b.6)
+
+
+            # (D + D <-> He^4 + gamma) (b.9)
+
+
+            # (D + He^3 <-> He^4 + p) (b.10)
+
+            # (D + T <-> He^4 + n) (b.11)
+
+
+            # (He^3 + T <-> He^4 + D) (b.15)
+ 
 
         if self.NR_species > 6: # Include Li7
             Y_Li7 = Y[6]
-            # (b.17)
-            # (b.18)
+            # (T + He^4 <-> Li^7 + gamma) (b.17)
+
 
         if self.NR_species > 7: # Include Be7
             Y_Be7 = Y[7]
-            # (b.16)
-            # (b.18)
+            # (He^3 + He^4 <-> Be^7 + gamma) (b.16)
+
+            # (n + Be^7 <-> p + Li^7) (b.18)
 
         
         return - dY / Hubble
