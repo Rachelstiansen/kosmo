@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from BBN import BBN
 
+plt.rcParams.update({"font.size": 12}) # For all the plots to have text size 12
 
 # Initiate the system including 2 species (neutrons and protons):
 bbn = BBN(NR_interacting_species = 2)
