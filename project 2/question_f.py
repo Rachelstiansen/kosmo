@@ -26,5 +26,5 @@ plt.show()
 
 """
 Question: overflow....
-også spør om BBN 64-66
+Why not include eq 4 for tritium??? 
 """

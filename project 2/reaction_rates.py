@@ -8,7 +8,6 @@ class ReactionRates:
     def __init__(self):
         pass
 
-
     def get_rate_weak(self, T9):
         """
         n + nu_e <-> p + e-

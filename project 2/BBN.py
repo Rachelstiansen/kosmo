@@ -66,7 +66,50 @@ class BBN:
             dY[2] -= change_LHS # Update the change to deuterium fraction
         
         if self.NR_species > 3: # include tritium
-            ...
+            Y_T = Y[3]
+            # (n + D <-> T + gamma ) (b.3)
+            Y_nD = Y_n * Y_D
+            rate_nD, rate_T = self.RR.get_nD_to_T(T9, rho_b)
+            change_LHS = Y_T * rate_T - Y_nD * rate_nD
+            dY[0] += change_LHS
+            dY[2] += change_LHS
+            dY[3] -= change_LHS
+
+            # (D + D <-> p + T) (b.8)
+            Y_DD = Y_D * Y_D
+            Y_pT = Y_p + Y_T
+            rate_DD, rate_pT = self.RR.get_DD_to_pT(T9, rho_b)
+            change_LHS = 2 * Y_pT * rate_pT - Y_DD * rate_DD
+            change_RHS = 0.5 * Y_DD * rate_DD - Y_pT * rate_pT
+            dY[2] += change_LHS
+            dY[1] += change_RHS
+            dY[3] += change_RHS
+        
+        if self.NR_species > 4: # Include He3
+            Y_He3 = Y[4]
+            # (b.2)
+            # (b.4)
+            # (b.6)
+            # (b.7)
+            # (b.15)
+            # (b.16)
+
+        if self.NR_species > 5: # Include He4
+            Y_He4 = Y[5]
+            # (b.15)
+            # (b.16)
+            # (b.17)
+
+        if self.NR_species > 6: # Include Li7
+            Y_Li7 = Y[6]
+            # (b.17)
+            # (b.18)
+
+        if self.NR_species > 7: # Include Be7
+            Y_Be7 = Y[7]
+            # (b.16)
+            # (b.18)
+
         
         return - dY / Hubble
 
