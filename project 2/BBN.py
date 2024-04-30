@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as au, constants as ac
 from scipy.integrate import solve_ivp
+from scipy.interpolate import CubicSpline
 
 # Own imports
 from reaction_rates import ReactionRates
@@ -67,7 +68,7 @@ class BBN:
         
         if self.NR_species > 3: # include tritium
             Y_T = Y[3]
-            # (n + D <-> T + gamma ) (b.3)
+            # (n + D <-> T + gamma) (b.3)
             Y_nD = Y_n * Y_D
             rate_nD, rate_T = self.RR.get_nD_to_T(T9, rho_b)
             change_LHS = Y_T * rate_T - Y_nD * rate_nD
@@ -87,8 +88,24 @@ class BBN:
         
         if self.NR_species > 4: # Include He3
             Y_He3 = Y[4]
-            # (b.2)
-            # (b.4)
+            # (p + D <->  He^3 + gamma) (b.2)
+            Y_pD = Y_p * Y_D
+            rate_pD, rate_He3 = self.RR.get_pD_to_He3(T9, rho_b)
+            change_LHS = Y_He3 * rate_He3 - Y_pD * rate_pD
+            dY[1] += change_LHS
+            dY[2] += change_LHS
+            dY[4] -= change_LHS
+
+            # (n + He^3 <-> p + T) (b.4)
+            Y_nHe3 = Y_n * Y_He3
+            rate_nHe3, rate_pT = self.RR.get_nHe3_to_pT(T9, rho_b)
+            # Might need to rename rates as they have the same name
+            change_LHS = Y_pT * rate_pT - Y_nHe3 * rate_nHe3
+            dY[0] += change_LHS
+            dY[4] += change_LHS
+            dY[1] -= change_LHS
+            dY[3] -= change_LHS
+
             # (b.6)
             # (b.7)
             # (b.15)
@@ -142,6 +159,14 @@ class BBN:
         Y_init[1] = Y_p_init
         
         return Y_init
+    
+    def interp(self, x_in, y_in, x_out):
+        x_in = np.log(x_in)
+        y_in = np.log(y_in)
+        x_out = np.log(x_out)
+        cs = CubicSpline(x_in, y_in)
+        ...
+
     
     def solve_BBN(self, T_init: float = 100e9, T_end: float = 0.01e9):
         """
