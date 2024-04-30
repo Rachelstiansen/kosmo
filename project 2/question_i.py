@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from BBN import BBN
+import numpy as np
 
 bbn = BBN(NR_interacting_species = 8)
 bbn.solve_BBN(T_init=100e9, T_end=0.01e9) # solve the system until end temperature 0.1e9 K
