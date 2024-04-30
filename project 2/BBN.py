@@ -96,6 +96,11 @@ class BBN:
 
         if self.NR_species > 5: # Include He4
             Y_He4 = Y[5]
+            # (b.5)
+            # (b.6)
+            # (b.9)
+            # (b.10)
+            # (b.11)
             # (b.15)
             # (b.16)
             # (b.17)
