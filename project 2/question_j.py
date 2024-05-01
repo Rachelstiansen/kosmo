@@ -31,23 +31,63 @@ def interp(x_in, y_in):
     f = interp1d(x_in, y_in, kind="cubic")
     return f
 
+# Interpolated functions
 YD_Yp_func = interp(Omega_b0, Y_D/Y_p)
+YLi7_Yp_func = interp(Omega_b0, Y_Li7/Y_p)
+YHe3_Yp_func = interp(Omega_b0, Y_He3/Y_p)
+Y_He4_func = interp(Omega_b0, Y_He4)
 
+# More resolved x_array for Omega_b0:
 x_new = np.geomspace(Omega_b0[0], Omega_b0[-1], 100)
 
-plt.loglog(x_new, np.exp(YD_Yp_func(np.log(x_new))))
-plt.show()
-
-
-
-YD_Yp_upper = 2.57e-5 + 0.03e-5
-YD_Yp_lower = 2.57e-5 - 0.03e-5
-
+# Observed values
+Y_He4 = 0.254
 Y_He4_upper = 0.254 + 0.003
 Y_He4_lower = 0.254 - 0.003
 
+YD_Yp = 2.57e-5
+YD_Yp_upper = 2.57e-5 + 0.03e-5
+YD_Yp_lower = 2.57e-5 - 0.03e-5
+
+YLi7_Yp = 1.6e-10
 YLi7_Yp_upper = 1.6e-10 + 0.3e-10
 YLi7_Yp_lower = 1.6e-10 - 0.3e-10
 
 def chi_2(model, data, error):
     return np.sum((model - data)**2 / (error**2))
+
+def Bayesian(model, data, error):
+    return 1 / (np.sqrt(2 * np.prod(error**2))) * np.exp(- chi_2(model, data, error))
+
+model = np.array([np.exp(YD_Yp_func(np.log(x_new))), np.exp(YHe3_Yp_func(np.log(x_new))), np.exp(YLi7_Yp_func(np.log(x_new)))])
+data = np.array([Y_He4, YD_Yp, YLi7_Yp])
+error = np.array([0.003, 0.03e-5, 0.3e-10])
+
+fig, ax = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
+
+# Plot He4:
+ax[0].plot(x_new, np.exp(Y_He4_func(np.log(x_new))) * 4, label=r"He$^4$",  color="brown")
+ax[0].fill_between(Omega_b0, Y_He4_upper, Y_He4_lower, color="brown", alpha=0.3)
+ax[0].set_ylabel(r"$4 Y_{He^4}$")
+ax[0].set_ylim(0.2, 0.3)
+ax[0].legend()
+
+ax[1].loglog(x_new, np.exp(YD_Yp_func(np.log(x_new))), label="D", color="green")
+ax[1].fill_between(Omega_b0, YD_Yp_upper, YD_Yp_lower, color="green", alpha=0.3)
+
+ax[1].loglog(x_new, np.exp(YHe3_Yp_func(np.log(x_new))), label=r"He$^3$", color="purple")
+
+ax[1].loglog(x_new, np.exp(YLi7_Yp_func(np.log(x_new))), label=r"Li$^7$", color="pink")
+ax[1].fill_between(Omega_b0, YLi7_Yp_upper, YLi7_Yp_lower, color="pink", alpha=0.3)
+ax[1].set_ylabel(r"$Y_i / Y_p$")
+ax[1].set_ylim(1.1e-10, 1e-3)
+ax[1].legend()
+
+ax[2].plot(Omega_b0, Bayesian(model, data, error), color="black")
+ax[2].set_xlabel(r"$\Omega_{b0}$")
+ax[2].set_ylabel("Bayesian \n likelihood")
+ax[2].legend()
+ax[2].set_xlim(1e-2, 1)
+
+plt.savefig("relic_abundances.png")
+
