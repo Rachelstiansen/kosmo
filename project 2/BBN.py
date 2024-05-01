@@ -241,13 +241,6 @@ class BBN:
         Y_init[1] = Y_p_init
         
         return Y_init
-    
-    def interp(self, x_in, y_in, x_out):
-        x_in = np.log(x_in)
-        y_in = np.log(y_in)
-        x_out = np.log(x_out)
-        cs = CubicSpline(x_in, y_in)
-        ...
 
     
     def solve_BBN(self, T_init: float = 100e9, T_end: float = 0.01e9):
@@ -262,6 +255,4 @@ class BBN:
         lnT = np.linspace(sol.t[0], sol.t[-1], self.NR_points)
         self.Y_i = sol.sol(lnT)
         self.T = np.exp(lnT)
-        
-        return self.T, self.Y_i
     

@@ -3,12 +3,12 @@ import numpy as np
 from astropy import units as au, constants as ac
 
 class Background:
-    def __init__(self) -> None:
-        self.N_eff = 3
+    def __init__(self, Omega_b0 = 0.05, N_eff = 3) -> None:
+        self.N_eff = N_eff
         self.T_0 = 2.725 # [K]
         self.h = 0.7
 
-        self.Omega_b0 = 0.05
+        self.Omega_b0 = Omega_b0
         self.H_0 = (100 * self.h * au.km / (au.second * au.Mpc)).cgs.value
         self.Omega_r0 = (8 * np.pi**3 * ac.G * (ac.k_B * self.T_0)**4 * (1 + self.N_eff * (7/8) * (4/11)**(4/3)) / (45 * self.H_0**2 * ac.hbar**3 * ac.c**5)).cgs.value
 
