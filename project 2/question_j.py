@@ -54,7 +54,7 @@ YLi7_Yp_upper = 1.6e-10 + 0.3e-10
 YLi7_Yp_lower = 1.6e-10 - 0.3e-10
 
 def chi_2(model, data, error):
-    return np.sum((model - data)**2 / (error**2))
+    return np.sum((model - data)**2 / error**2)
 
 def Bayesian(model, data, error):
     return 1 / (np.sqrt(2 * np.prod(error**2))) * np.exp(- chi_2(model, data, error))
@@ -63,16 +63,30 @@ model = np.array([np.exp(YD_Yp_func(np.log(x_new))), np.exp(YHe3_Yp_func(np.log(
 data = np.array([Y_He4, YD_Yp, YLi7_Yp])
 error = np.array([0.003, 0.03e-5, 0.3e-10])
 
-fig, ax = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
+# Need to initialize arrays?
+Bayesian_prob = np.zeros(len(x_new))
+chi2 = np.zeros(len(x_new))
+
+for i in range(len(x_new)):
+    Bayesian_prob[i] = np.transpose(Bayesian((model[:, i]), data, error))
+    chi2[i] = np.transpose(chi_2((model[:, i]), data, error))
+
+print(np.shape(model))
+print(np.shape(Bayesian_prob))
+
+fig, ax = plt.subplots(3, 1, figsize=(11, 7), sharex=True)
 
 # Plot He4:
 ax[0].plot(x_new, np.exp(Y_He4_func(np.log(x_new))) * 4, label=r"He$^4$",  color="brown")
+ax[0].axvline(x_new[np.argmin(chi2)], ls="dotted", color="black")
 ax[0].fill_between(Omega_b0, Y_He4_upper, Y_He4_lower, color="brown", alpha=0.3)
 ax[0].set_ylabel(r"$4 Y_{He^4}$")
 ax[0].set_ylim(0.2, 0.3)
 ax[0].legend()
 
+# Plot D, He^3, Li^7, 
 ax[1].loglog(x_new, np.exp(YD_Yp_func(np.log(x_new))), label="D", color="green")
+ax[1].axvline(x_new[np.argmin(chi2)], ls="dotted", color="black")
 ax[1].fill_between(Omega_b0, YD_Yp_upper, YD_Yp_lower, color="green", alpha=0.3)
 
 ax[1].loglog(x_new, np.exp(YHe3_Yp_func(np.log(x_new))), label=r"He$^3$", color="purple")
@@ -80,14 +94,16 @@ ax[1].loglog(x_new, np.exp(YHe3_Yp_func(np.log(x_new))), label=r"He$^3$", color=
 ax[1].loglog(x_new, np.exp(YLi7_Yp_func(np.log(x_new))), label=r"Li$^7$", color="pink")
 ax[1].fill_between(Omega_b0, YLi7_Yp_upper, YLi7_Yp_lower, color="pink", alpha=0.3)
 ax[1].set_ylabel(r"$Y_i / Y_p$")
-ax[1].set_ylim(1.1e-10, 1e-3)
+ax[1].set_ylim(1e-11, 1e-3)
 ax[1].legend()
 
-ax[2].plot(Omega_b0, Bayesian(model, data, error), color="black")
+# Plot Bayesian likelihood
+ax[2].plot(x_new, Bayesian_prob, color="black")
+ax[2].axvline(x_new[np.argmin(chi2)], ls="dotted", color="black", label=r"$\chi^2$ =" + f"{np.min(chi2):.3f} \n" + r"$\Omega_{b0} =$" + f"{Omega_b0[np.argmin(chi2)]}")
 ax[2].set_xlabel(r"$\Omega_{b0}$")
 ax[2].set_ylabel("Bayesian \n likelihood")
 ax[2].legend()
 ax[2].set_xlim(1e-2, 1)
 
-plt.savefig("relic_abundances.png")
+fig.savefig("j_relic_abundances.png")
 
