@@ -11,12 +11,17 @@ from background import Background, cgs
 class BBN:
     """
     General Big Bang nucleosynthesis class solving the Boltzmann equations for a collection
-    of particle species in the early universe .
+    of particle species in the early universe.
     """
     def __init__(self, NR_interacting_species: int = 2, **background_kwargs) -> None:
         """
-        The class takes NR_interacting_species as input on initialization . This is a number
+        The class takes NR_interacting_species as input on initialization. This is a number
         between 2 and 8, determining the collection of particles to be considered :
+        
+        Keyword Arguments :
+            NR_interacting_species {int} -- The number of particle species (default : {2}), max = 8
+            
+            background_kwargs {dict} -- Arguments passed to the background , e.g. Neff and Omega_b0
         """
         self.NR_species = NR_interacting_species # The number of particle species
         self.species_labels = ["n", "p", "D", "T", "He3 ", "He4 ", "Li7 ", "Be7"] # The particle names
@@ -35,9 +40,9 @@ class BBN:
 
         Arguments :
             lnT {float} -- natural log of temperature
+            
             Y {np.ndarray} -- array of relative abundance for each species.
-            With all included species Y takes the form:
-            n, p, D, T, He3, He4, Li7, Be7 = Y
+                With all included species Y takes the form: n, p, D, T, He3, He4, Li7, Be7 = Y
         """
         T = np.exp(lnT)
         T9 = T / 1e9
@@ -99,7 +104,6 @@ class BBN:
             # (n + He^3 <-> p + T) (b.4)
             Y_nHe3 = Y_n * Y_He3
             rate_nHe3_pT, rate_pT_nHe3 = self.RR.get_nHe3_to_pT(T9, rho_b)
-            # Might need to rename rates as they have the same name
             change_LHS = Y_pT * rate_pT_nHe3 - Y_nHe3 * rate_nHe3_pT
             dY[0] += change_LHS
             dY[4] += change_LHS
@@ -219,7 +223,7 @@ class BBN:
 
     def get_np_equil(self, T_i):
         """
-        ...
+        Calculates the initial values of Y_n and Y_p using equation (16) and (17) in the project description
         """
         Y_n = (1 + np.exp((self.cgs.m_n - self.cgs.m_p) * self.cgs.c**2 / (self.cgs.k_B * T_i)))**(-1)
         Y_p = 1 - Y_n
@@ -228,12 +232,11 @@ class BBN:
 
     def get_IC(self, T_init):
         """
-        Defines the initial condition array used in solve_BBN.
-        The only nonzero values are for neutrons and protons, but the shape of self.Y_init is
-        determined by the number of particles included .
+        Defines the initial condition array used in solve_BBN. The only nonzero values are for 
+        neutrons and protons, but the shape of self.Y_init is determined by the number of particles included.
         
         Arguments :
-        T_init { float } -- the initial temperature
+            T_init {float} -- the initial temperature
         """
         Y_init = np.zeros(self.NR_species) # Initializes all species to zero
         Y_n_init, Y_p_init = self.get_np_equil(T_init) # Solves eq 16-17
@@ -248,11 +251,13 @@ class BBN:
         Solves the BBN - system for a given range of temperature values
         
         Keyword Arguments :
-            T_init { float } -- the initial temperature ( default : { 100e9 })
-            T_end { float } -- the final temperature ( default : {0. 01e9 })
+            T_init {float} -- the initial temperature ( default : { 100e9 })
+            T_end {float} -- the final temperature ( default : {0. 01e9 })
         """
         sol = solve_ivp(self.get_ODE, [np.log(T_init), np.log(T_end)], y0=self.get_IC(T_init), method="Radau", rtol=1e-12, atol=1e-12, dense_output=True)
+        # Define linearly spaced logarithmic temperatures using points from the solver :
         lnT = np.linspace(sol.t[0], sol.t[-1], self.NR_points)
-        self.Y_i = sol.sol(lnT)
-        self.T = np.exp(lnT)
+        self.Y_i = sol.sol(lnT) # use ln(T) to extract the solved solutions
+        # Use ln(T) to create a corresponding logarithmically spaced T array
+        self.T = np.exp(lnT) # array used for plotting , points corresponds to self .Y
     
