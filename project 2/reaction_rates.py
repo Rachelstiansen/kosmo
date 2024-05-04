@@ -10,25 +10,30 @@ class ReactionRates:
 
     def get_rate_weak(self, T9):
         """
+        Function for calculating the weak reactions 1)-3) given in table 2a)
+        from the Wagoner et al. article:
         n + nu_e <-> p + e-
         n + e+ <-> p + anti nu_e
         n <-> p + e- + anti nu_e
         """
-        T_nu = (4/11)**(1/3) * T9
-        tau = 1700 # [s] free neutron decay time
-        q = 2.53 # (m_n - m_p) / m_e
+        T_nu = (4/11)**(1/3) * T9   # Neutrino temperature [K]
+        tau = 1700                  # Free neutron decay time [s]
+        q = 2.53                    # (m_n - m_p) / m_e
 
-        Z = 5.93 / T9
+        Z = 5.93 / T9  
         Z_nu = 5.93 / T_nu
 
         def I_n_p(x):
+            # The sum of the two integrals in equation 12 in the project description for
+            # reaction rate n -> p:
             return (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x + q) * Z_nu))) + (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x - q) * Z_nu)))
 
         def I_p_n(x):
+            # The sum of the same two integrals for raction rate p -> n:
             return (x - q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(x * Z)) * (1 + np.exp(-(x - q) * Z_nu))) + (x + q)**2 * (x**2 - 1)**(1/2) * x / ((1 + np.exp(-x * Z)) * (1 + np.exp((x + q) * Z_nu)))
 
-        lambda_n = quad(I_n_p, 1, np.inf)[0] / tau
-        lambda_p = quad(I_p_n, 1, np.inf)[0] / tau
+        lambda_n = quad(I_n_p, 1, np.inf)[0] / tau # reaction rate n -> p
+        lambda_p = quad(I_p_n, 1, np.inf)[0] / tau # reaction rate p -> n
         
         return lambda_n, lambda_p
     

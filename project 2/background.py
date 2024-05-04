@@ -4,7 +4,7 @@ from astropy import units as au, constants as ac
 
 class Background:
     def __init__(self, Omega_b0 = 0.05, N_eff = 3) -> None:
-        self.N_eff = N_eff
+        self.N_eff = N_eff  # Effective number of 
         self.T_0 = 2.725 # [K]
         self.h = 0.7
 
