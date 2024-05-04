@@ -5,9 +5,11 @@ from scipy.interpolate import interp1d
 from tqdm import tqdm
 
 plt.rcParams.update({"font.size": 12}) # For all the plots to have text size 12
-# Computing the relic abundances:
 
+# Computing the relic abundances:
 Omega_b0 = np.logspace(-2, 0, 10)
+
+# Initializing arrays to keep values of the relative number densities
 Y_D = np.zeros(len(Omega_b0)); Y_p = np.zeros(len(Omega_b0))
 Y_He4 = np.zeros(len(Omega_b0)); Y_Li7 = np.zeros(len(Omega_b0)); Y_He3 = np.zeros(len(Omega_b0))
 
@@ -67,7 +69,7 @@ model = np.array([4 * np.exp(Y_He4_func(np.log(x_new))), np.exp(YD_Yp_func(np.lo
 data = np.array([Y_He4, YD_Yp, YLi7_Yp])
 error = np.array([0.003, 0.03e-5, 0.3e-10])
 
-# Need to initialize arrays?
+# Initialize arrays for the probabilities
 Bayesian_prob = np.zeros(len(x_new))
 chi2 = np.zeros(len(x_new))
 
@@ -75,10 +77,7 @@ for i in range(len(x_new)):
     Bayesian_prob[i] = (Bayesian(np.transpose(model[:, i]), data, error))
     chi2[i] = (chi_2(np.transpose(model[:, i]), data, error))
 
-
-print(x_new[np.argmin(chi2)])
-print(np.min(chi2))
-
+# Plotting relic abundances:
 fig, ax = plt.subplots(3, 1, figsize=(7, 10), sharex=True)
 
 # Plot He4:
@@ -89,7 +88,7 @@ ax[0].set_ylabel(r"$4 Y_{He^4}$")
 ax[0].set_ylim(0.2, 0.3)
 ax[0].legend()
 
-# Plot D, He^3, Li^7, 
+# Plot D, He^3, Li^7:
 ax[1].loglog(x_new, np.exp(YD_Yp_func(np.log(x_new))), label="D", color="green")
 ax[1].axvline(x_new[np.argmin(chi2)], ls="dotted", color="black")
 ax[1].fill_between(Omega_b0, YD_Yp_upper, YD_Yp_lower, color="green", alpha=0.3)

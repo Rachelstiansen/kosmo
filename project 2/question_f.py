@@ -7,6 +7,7 @@ plt.rcParams.update({"font.size": 12}) # For all the plots to have text size 12
 bbn = BBN(NR_interacting_species = 2)
 bbn.solve_BBN(T_init=100e9, T_end=0.1e9) # solve the system until end temperature 0.1e9 K
 
+
 # Plot the mass fraction for each species :
 colors = ["blue", "orange"]
 fig, ax = plt.subplots()

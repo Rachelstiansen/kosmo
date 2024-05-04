@@ -5,9 +5,11 @@ from scipy.interpolate import interp1d
 from tqdm import tqdm
 
 plt.rcParams.update({"font.size": 12}) # For all the plots to have text size 12
-# Computing the relic abundances:
 
+# Computing the relic abundances:
 N_eff = np.logspace(0, np.log10(5)/np.log10(10), 10)
+
+# Initializing arrays to keep values of the relative number densities
 Y_D = np.zeros(len(N_eff)); Y_p = np.zeros(len(N_eff))
 Y_He4 = np.zeros(len(N_eff)); Y_Li7 = np.zeros(len(N_eff)); Y_He3 = np.zeros(len(N_eff))
 
@@ -67,7 +69,7 @@ model = np.array([4 * np.exp(Y_He4_func(np.log(x_new))), np.exp(YD_Yp_func(np.lo
 data = np.array([Y_He4, YD_Yp, YLi7_Yp])
 error = np.array([0.003, 0.03e-5, 0.3e-10])
 
-# Need to initialize arrays?
+# Initialize arrays for probabilities
 Bayesian_prob = np.zeros(len(x_new))
 chi2 = np.zeros(len(x_new))
 
@@ -76,9 +78,7 @@ for i in range(len(x_new)):
     chi2[i] = (chi_2(np.transpose(model[:, i]), data, error))
 
 
-print(x_new[np.argmin(chi2)])
-print(np.min(chi2))
-
+# Plotting relic abundances:
 fig, ax = plt.subplots(4, 1, figsize=(7, 10), sharex=True)
 
 # Plot He4:
@@ -118,5 +118,4 @@ ax[3].set_xlim(1, 5)
 fig.tight_layout()
 fig.savefig("k_relic_abundances.png")
 
-# changed geomspace to linspace, might need to change back, and loglog to plot
 
