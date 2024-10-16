@@ -1,2 +1,3 @@
 # AST3220 – Cosmology I
- This repository contains all code and figures used in the three graded projects for the course.
+This repository contains all code, figures and reports delivered for the three graded projects in the course.
+
